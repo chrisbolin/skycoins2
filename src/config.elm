@@ -10,7 +10,10 @@ type alias Config =
     , engine : Float
     , thrusters : Float
     , backgroundColor : String
-    , base :
+    , primaryColor : String
+    , secondaryColor: String
+    , tertiaryColor: String
+    , water :
         { y : Float
         , color : String
         }
@@ -43,9 +46,12 @@ config =
     , gravity = 1.5
     , engine = 2.2
     , thrusters = 2
-    , backgroundColor = "#9DACC9"
-    , base =
-        { color = "#202692"
+    , backgroundColor = "#615a75"
+    , primaryColor = "#fafafa"
+    , secondaryColor = "#dddddd"
+    , tertiaryColor = "#bbbbbb"
+    , water =
+        { color = "black"
         , y = 5
         }
     , pad =

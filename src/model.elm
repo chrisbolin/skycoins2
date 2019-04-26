@@ -58,6 +58,7 @@ type alias Model =
         , show : Bool
         }
     , highScore : Int
+    , wind : Float
     , intervalLengthMs : Float
     , leaderboard : Leaderboard
     , username : String
@@ -76,11 +77,12 @@ initialModel =
     , rightThruster = False
     , leftThruster = False
     , x = 140
-    , y = 40
+    , y = 38
     , theta = 0
     , dx = 0
     , dy = 0
     , dtheta = 0
+    , wind = 1
     , intervalLengthMs = 0
     , highScore = 0
     , coin =
@@ -112,7 +114,7 @@ state model =
         _ ->
             if model.state == Crashed then
                 { model | state = Paused, score = 0 }
-            else if model.y > (config.vehicle.y / 2 + config.base.y) then
+            else if model.y > (config.vehicle.y / 2 + config.water.y) then
                 { model | state = Flying }
             else if model.x < 45 || model.x > 50 + config.pad.x then
                 { model | state = Crashed }
@@ -154,10 +156,11 @@ coin model =
         { model
             | coin =
                 { x = floatModulo (model.coin.x + 71) 200
-                , y = clamp (config.base.y + config.coin.y) 100 (floatModulo (model.coin.y + 39) 100)
+                , y = clamp (config.water.y + config.coin.y) 100 (floatModulo (model.coin.y + 39) 100)
                 }
             , score = model.score + 100
             , goal = Pad
+            , wind = model.wind + 1
         }
     else
         model
@@ -185,6 +188,8 @@ vehicle model =
             else
                 0
 
+        dxWind = model.wind * -0.01
+
         -- computed
         dy1 =
             (if model.state == Flying then
@@ -195,12 +200,12 @@ vehicle model =
                 + dyEngine
 
         y1 =
-            max (config.vehicle.y / 2 + config.base.y) (model.y + dy1 * intervalLength)
+            max (config.vehicle.y / 2 + config.water.y) (model.y + dy1 * intervalLength)
 
         -- don't go "under" the ground
         dx1 =
             if model.state == Flying then
-                (model.dx + dxEngine)
+                (model.dx + dxEngine + dxWind)
             else
                 model.dx / config.correction.dx
 

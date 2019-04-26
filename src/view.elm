@@ -31,11 +31,9 @@ import Msg exposing (Msg(Tick, KeyUp, KeyDown, ChangeName, SubmitName))
 
 constants :
     { font : String
-    , red : String
     }
 constants =
     { font = "VT323, monospace"
-    , red = "#dd5555"
     }
 
 
@@ -45,8 +43,9 @@ view model =
         mainStyle =
             style
                 [ ( "padding", "0px" )
+                , ( "user-select", "none" )
                 , ( "height", "100vh" )
-                , ( "background-color", config.base.color )
+                , ( "background-color", config.water.color )
                 , ( "font-family", "VT323, monospace" )
                 ]
     in
@@ -111,29 +110,29 @@ coin model =
 base : Model -> Svg.Svg a
 base model =
     let
-        baseY =
-            100 - config.base.y
+        waterY =
+            100 - config.water.y
 
         vehicleWidth =
             config.vehicle.x * cos (degrees model.theta)
     in
         g []
             [ line
-                -- ocean
+                -- water
                 [ x1 "0"
                 , y1 "100"
                 , x2 "200"
                 , y2 "100"
-                , stroke config.base.color
-                , strokeWidth (config.base.y * 2 |> toString)
+                , stroke config.water.color
+                , strokeWidth (config.water.y * 2 |> toString)
                 ]
                 []
             , line
                 -- pad
                 [ x1 "50"
-                , y1 (baseY + 0.5 |> toString)
+                , y1 (waterY + 0.5 |> toString)
                 , x2 (50 + config.pad.x |> toString)
-                , y2 (baseY + 0.5 |> toString)
+                , y2 (waterY + 0.5 |> toString)
                 , stroke config.pad.color
                 , strokeWidth (config.pad.y |> toString)
                 ]
@@ -141,9 +140,9 @@ base model =
             , line
                 -- shadow
                 [ x1 (model.x - vehicleWidth / 2 |> toString)
-                , y1 (baseY + 0.5 |> toString)
+                , y1 (waterY + 0.5 |> toString)
                 , x2 (model.x + vehicleWidth / 2 |> toString)
-                , y2 (baseY + 0.5 |> toString)
+                , y2 (waterY + 0.5 |> toString)
                 , stroke "black"
                 , opacity "0.4"
                 , strokeWidth "1"
@@ -218,8 +217,8 @@ paused model =
             , menu
             , text' [ y "99", x "166", fontSize "4", fill "black" ]
                 [ a
-                    [ xlinkHref "http://chris.bolin.co", fill "white" ]
-                    [ text "© 2016 chris bolin"
+                    [ xlinkHref "http://chris.bolin.co", fill config.secondaryColor ]
+                    [ text "© 2019 chris bolin"
                     ]
                 ]
             ]
@@ -229,10 +228,11 @@ paused model =
 
 title : Svg.Svg a
 title =
-    g [ fontSize "7", fill constants.red ]
-        [ text' [ y "50", fontSize "59" ] [ text "SKYCOINS" ]
-        , text' [ y "62", x "2" ]
-            [ text """"I hate this." - an early fan"""
+    g [ fontSize "7", fill config.primaryColor ]
+        [ text' [ y "48", fontSize "59" ] [ text "SKYCOINS" ]
+        , text' [ y "20", x "180", fontSize "25", fill config.secondaryColor ] [ text "II" ]
+        , text' [ y "54", x "2", fontSize "14", fill config.tertiaryColor ]
+            [ text "BLIZZARD CONDITIONS POSSIBLE"
             ]
         , text' [ y "70", x "2.9" ]
             [ text "get coins. land safely. repeat."
@@ -241,7 +241,7 @@ title =
             [ text "up/left/right"
             ]
           -- press start
-        , text' [ y "88", x "100", fill "white", textAnchor "middle" ]
+        , text' [ y "88", x "100", fill config.secondaryColor, textAnchor "middle" ]
             [ text "PRESS SPACE"
             ]
         ]
@@ -249,7 +249,7 @@ title =
 
 menu : Svg.Svg a
 menu =
-    g [ fontSize "4", fill "white", transform "translate(165 60)" ]
+    g [ fontSize "4", fill config.secondaryColor, transform "translate(165 60)" ]
         [ text' [] [ text "[L] - Leaderboard" ]
         , text' [ y "5" ] [ text "[D] - Dashboard" ]
         , text' [ y "10" ] [ text "[Space] - Pause" ]
