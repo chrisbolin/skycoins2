@@ -12,7 +12,7 @@ var db = firebase.database();
 
 var app = Elm.Main.fullscreen();
 
-var HIGHSCORE = 'HIGHSCORE';
+var HIGHSCORE = "HIGHSCORE";
 
 // subscriptions
 
@@ -31,34 +31,36 @@ app.ports.getSavedScore.send(highScore);
 // firebase methods
 
 function saveLeaderboardScore(username, score) {
-  console.log('Saving new leaderboard entry', score, 'for', username);
-  db.ref('highscores').push({
+  console.log("Saving new leaderboard entry", score, "for", username);
+  db.ref("highscores").push({
     username: username,
     score: score,
-    timestamp: firebase.database.ServerValue.TIMESTAMP,
+    timestamp: firebase.database.ServerValue.TIMESTAMP
   });
 }
 
 function saveLocalHighscore(score) {
   if (score > getLocalHighScore()) {
-    console.log('Saving new LOCAL best', score);
+    console.log("Saving new LOCAL best", score);
     localStorage.setItem(HIGHSCORE, score);
   }
 }
 
 function getLeaderboard() {
-  return db.ref('highscores').orderByChild('score').limitToLast(10).on('value', function(snapshot) {
-    var raw = snapshot.val();
-    var leaderboard = Object.keys(raw)
-      .map(function(key){
-        return raw[key]
-      })
-    app.ports.getLeaderboard.send(leaderboard);
-  });
+  return db
+    .ref("highscores")
+    .orderByChild("score")
+    .limitToLast(10)
+    .on("value", function(snapshot) {
+      var raw = snapshot.val();
+      var leaderboard = Object.keys(raw).map(function(key) {
+        return raw[key];
+      });
+      app.ports.getLeaderboard.send(leaderboard);
+    });
 }
 
 getLeaderboard();
-
 
 // helpers
 
